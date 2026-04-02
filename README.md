@@ -1,1 +1,1 @@
-//THIS IS A BASIC HEALTH REMINDERS APP, THAT TRACKS MILES RAN PER WEEK, AS WELL AS JUST HAS BASIC HEALTH REMINDERS AND SO ON
+Basic health reminders app, also tracks miles ran per day, and calculates running pace.
