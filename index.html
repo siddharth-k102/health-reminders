@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>reminders</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <span class="app-title">reminders</span>
+        <button id="btn-new-list" class="icon-btn" title="New list">+</button>
+      </div>
+
+      <nav class="smart-lists">
+        <button class="nav-item active" data-view="today">
+          <span class="nav-icon today-icon">☀</span>
+          <span>today</span>
+          <span class="badge" id="badge-today"></span>
+        </button>
+        <button class="nav-item" data-view="all">
+          <span class="nav-icon all-icon">◈</span>
+          <span>all</span>
+          <span class="badge" id="badge-all"></span>
+        </button>
+        <button class="nav-item" data-view="flagged">
+          <span class="nav-icon flag-icon">⚑</span>
+          <span>flagged</span>
+          <span class="badge" id="badge-flagged"></span>
+        </button>
+        <button class="nav-item" data-view="health">
+          <span class="nav-icon health-icon">◎</span>
+          <span>health</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-section-label">my lists</div>
+      <nav class="user-lists" id="user-lists"></nav>
+
+      <button id="btn-new-list-bottom" class="add-list-btn">
+        <span>+</span> add list
+      </button>
+    </aside>
+
+    <!-- Main content -->
+    <main id="main">
+      <!-- Reminders view -->
+      <section id="view-reminders" class="view active">
+        <div class="view-header">
+          <div class="view-title-wrap">
+            <h1 id="view-title">today</h1>
+            <span id="view-count" class="view-count"></span>
+          </div>
+          <button id="btn-add-reminder" class="add-btn">+ new reminder</button>
+        </div>
+
+        <!-- Add reminder form -->
+        <form id="form-add-reminder" class="add-form hidden">
+          <input type="text" id="input-reminder-title" placeholder="reminder title" autocomplete="off" />
+          <div class="form-row">
+            <input type="text" id="input-reminder-notes" placeholder="notes (optional)" />
+            <input type="date" id="input-reminder-date" />
+            <select id="input-reminder-list">
+              <option value="">no list</option>
+            </select>
+            <button type="button" id="btn-flag-reminder" class="flag-toggle" title="Flag">⚑</button>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">add</button>
+            <button type="button" id="btn-cancel-reminder" class="btn-ghost">cancel</button>
+          </div>
+        </form>
+
+        <ul id="reminder-list" class="reminder-list"></ul>
+
+        <div id="empty-state" class="empty-state hidden">
+          <span class="empty-icon">✓</span>
+          <p>nothing here</p>
+        </div>
+      </section>
+
+      <!-- Health view -->
+      <section id="view-health" class="view hidden">
+        <div class="view-header">
+          <div class="view-title-wrap">
+            <h1>health</h1>
+            <span class="view-subtitle">last 30 days</span>
+          </div>
+          <button id="btn-log-run" class="add-btn">+ log run</button>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="stat-runs">—</span>
+            <span class="stat-label">runs</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-miles">—</span>
+            <span class="stat-label">total miles</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-avg">—</span>
+            <span class="stat-label">avg miles</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-best">—</span>
+            <span class="stat-label">best run</span>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-section">
+          <div class="chart-label">weekly miles</div>
+          <div id="bar-chart" class="bar-chart"></div>
+        </div>
+
+        <!-- Log run form -->
+        <form id="form-log-run" class="add-form hidden">
+          <div class="form-row">
+            <div class="form-field">
+              <label>date</label>
+              <input type="date" id="input-run-date" required />
+            </div>
+            <div class="form-field">
+              <label>miles</label>
+              <input type="number" id="input-run-miles" placeholder="3.1" step="0.01" min="0" required />
+            </div>
+            <div class="form-field">
+              <label>duration (min)</label>
+              <input type="number" id="input-run-duration" placeholder="30" min="1" required />
+            </div>
+          </div>
+          <input type="text" id="input-run-notes" placeholder="notes (optional)" />
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">save</button>
+            <button type="button" id="btn-cancel-run" class="btn-ghost">cancel</button>
+          </div>
+        </form>
+
+        <!-- Run log table -->
+        <div class="run-log">
+          <div class="run-log-header">
+            <span>date</span>
+            <span>miles</span>
+            <span>time</span>
+            <span>pace</span>
+            <span>notes</span>
+            <span></span>
+          </div>
+          <div id="run-log-list"></div>
+          <div id="health-empty" class="empty-state hidden">
+            <span class="empty-icon">◎</span>
+            <p>no runs logged</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Edit reminder modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>edit reminder</h2>
+        <button id="btn-close-modal" class="icon-btn">×</button>
+      </div>
+      <form id="form-edit-reminder">
+        <input type="text" id="edit-title" placeholder="title" required />
+        <textarea id="edit-notes" placeholder="notes" rows="3"></textarea>
+        <div class="form-row">
+          <div class="form-field">
+            <label>due date</label>
+            <input type="date" id="edit-date" />
+          </div>
+          <div class="form-field">
+            <label>list</label>
+            <select id="edit-list">
+              <option value="">no list</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">save</button>
+          <button type="button" id="btn-delete-from-modal" class="btn-danger">delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- New list modal -->
+  <div id="modal-new-list" class="modal-overlay hidden">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2>new list</h2>
+        <button id="btn-close-new-list" class="icon-btn">×</button>
+      </div>
+      <form id="form-new-list">
+        <input type="text" id="input-list-name" placeholder="list name" required autocomplete="off" />
+        <div class="color-picker">
+          <button type="button" class="color-swatch active" data-color="#e2b714" style="background:#e2b714"></button>
+          <button type="button" class="color-swatch" data-color="#ca4754" style="background:#ca4754"></button>
+          <button type="button" class="color-swatch" data-color="#46a6a1" style="background:#46a6a1"></button>
+          <button type="button" class="color-swatch" data-color="#7c5cbf" style="background:#7c5cbf"></button>
+          <button type="button" class="color-swatch" data-color="#5b9e6a" style="background:#5b9e6a"></button>
+          <button type="button" class="color-swatch" data-color="#d17a22" style="background:#d17a22"></button>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">create</button>
+          <button type="button" id="btn-cancel-new-list" class="btn-ghost">cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
